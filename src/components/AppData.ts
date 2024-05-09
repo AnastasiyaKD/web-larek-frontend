@@ -16,7 +16,7 @@ export class AppState extends Model<IAppState> {
 		phone: '',
 		address: '',
 		total: 0,
-		paymentMethod:'',
+		payment: '',
 		items: [],
 	};
 	formErrors: FormErrors = {};
@@ -24,6 +24,11 @@ export class AppState extends Model<IAppState> {
 	get totalPrice(): number {
 		return this.basketCatalog.reduce((a, item) => (a += item.price), 0);
 	}
+
+	set total(value: number) {
+		this.order.total = value;
+	}
+
 	setCatalog(item: IProductCard[]) {
 		this.catalog = item;
 		this.emitChanges(`item:change`, { catalog: this.catalog });
@@ -32,7 +37,7 @@ export class AppState extends Model<IAppState> {
 	setBasketProduct(item: IProductCard) {
 		this.basketCatalog.push(item);
 	}
-    
+
 	deleteBasketItem(itemToRemove: IProductCard) {
 		this.basketCatalog = this.basketCatalog.filter(
 			(item) => item !== itemToRemove
@@ -43,12 +48,19 @@ export class AppState extends Model<IAppState> {
 		return this.basketCatalog.includes(item);
 	}
 
+	itemOrder() {
+		this.order.items = [];
+		this.basketCatalog.forEach((item) => {
+			this.order.items.push(item.id);
+		});
+	}
+
 	clearBasket() {
 		this.basketCatalog = [];
 	}
 
 	cleanInputs() {
-		this.order.paymentMethod = null;
+		this.order.payment = null;
 		this.order.address = '';
 		this.order.email = '';
 		this.order.phone = '';
@@ -59,30 +71,32 @@ export class AppState extends Model<IAppState> {
 	}
 
 	setFormAddress(field: keyof IFormAddress, value: string) {
-		if (field === 'paymentMethod' && (value === 'card' || value === 'cash')) {
-			this.order[field] = value;
-		} else if (field !== 'paymentMethod') {
-			this.order[field] = value;
-		}
-
-		if (this.validateOrder()) {
-			this.events.emit('order:ready', this.order);
-		}
+		if (field === 'payment' && (value === 'card' || value === 'cash')) {
+            value === 'card' ? this.order.payment = 'При получении' : this.order.payment = 'Онлайн'
+            if(this.validateOrder()) {
+                this.events.emit('order:ready', this.order);
+            }
+        } else if (field !== 'payment') {
+            this.order[field] = value;
+            if (this.validateOrder()) {
+                this.events.emit('order:ready', this.order);
+            }
+        }
 	}
 
 	setFormContacts(field: keyof IFormContscts, value: string) {
 		this.order[field] = value;
 
-		if (this.validateOrder()) {
+		if (this.validateContacts()) {
 			this.events.emit('order:ready', this.order);
 		}
 	}
 
 	validateOrder() {
 		const errors: typeof this.formErrors = {};
-        if (!this.order.paymentMethod)
-			errors.paymentMethod
-         = 'Необходимо указать способ оплаты';
+		if (!this.order.payment) {
+			errors.payment = 'Необходимо указать способ оплаты';
+		}
 		if (!this.order.address) {
 			errors.address = 'Необходимо указать адресс';
 		}

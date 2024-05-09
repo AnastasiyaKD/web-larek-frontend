@@ -42,7 +42,7 @@ export interface IForm {
 
 //Интерфейс формы способа оплаты и адреса
 export interface IFormAddress {
-	paymentMethod: string;
+	payment: string;
 	address: string;
 }
 
@@ -63,7 +63,7 @@ export interface ISuccessActions {
 }
 
 export interface IOrder {
-	paymentMethod: string;
+	payment: string;
 	address: string;
 	email: string;
 	phone: string;

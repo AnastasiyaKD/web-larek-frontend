@@ -45,6 +45,7 @@ export class Basket extends Component<IBasket> {
 export class BasketProduct extends ProductCard {
 	protected _index: HTMLElement;
 	protected _deleteButton: HTMLElement;
+    
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super(container);
 

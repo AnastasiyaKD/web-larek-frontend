@@ -36,14 +36,6 @@ export class ProductCard extends Component<ICardElement> {
 		}
 	}
 
-	// set id(value: string) {
-	//     this.container.dataset.id = value;
-	//   }
-
-	//   get id(): string {
-	//     return this.container.dataset.id || '';
-	//   }
-
 	set category(value: string) {
 		this._category.textContent = value;
 		this._category.classList.add(`card__category${categoryObj[value]}`);

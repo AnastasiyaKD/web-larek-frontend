@@ -12,7 +12,6 @@ import {
 	IFormAddress,
 	IFormContscts as IFormContacts,
 	IProductCard,
-	PaymentMethods,
 } from './types';
 import { Modal } from './components/Modal';
 import { Basket, BasketProduct } from './components/Basket';
@@ -133,13 +132,15 @@ events.on('basket:changed', () => {
 	basket.total = appData.totalPrice;
 	page.counter = appData.basketCatalog.length;
 	basket.disabledButton(appData.basketCatalog.length);
+    appData.total = appData.totalPrice
+    appData.itemOrder()
 });
 
 //Открытие формы с способом оплаты и аддресом
 events.on('order:open', () => {
 	modal.render({
 		content: formAddress.render({
-			paymentMethod: '',
+			payment: '',
 			address: '',
 			valid: false,
 			errors: [],
@@ -159,14 +160,8 @@ events.on('order:submit', () => {
 	});
 });
 
-//Выбор способа оплаты
-// events.on('payment:change', (value: { name: PaymentMethods }) => {
-// 	const { name } = value;
-// 	appData.setFormAddress('paymentMethod', name);
-// });
-
 events.on('payment:change', (data: { payment: string }) => {
-	appData.setFormAddress('paymentMethod', data.payment);
+	appData.setFormAddress('payment', data.payment);
 });
 
 events.on(
@@ -189,10 +184,10 @@ events.on(
 events.on(
 	'formErrors:change',
 	(errors: Partial<IFormAddress & IFormContacts>) => {
-		const { email, phone, address, paymentMethod } = errors;
+		const { email, phone, address, payment } = errors;
 		formContacts.valid = !email && !phone;
-        formAddress.valid = !address && !paymentMethod;
-		formAddress.errors = Object.values({ address, paymentMethod })
+        formAddress.valid = !address && !payment;
+		formAddress.errors = Object.values({ address, payment})
 			.filter((i) => !!i)
 			.join('; ');
 		formContacts.errors = Object.values({ phone, email })
@@ -204,7 +199,7 @@ events.on(
 
 //Отправка формы заказа
 events.on('contacts:submit', () => {
-	//appData.setOrderItems();
+//	appData.setOrderItems();
 	api
 		.postOrder(appData.order)
 		.then((data) => {

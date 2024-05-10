@@ -48,7 +48,7 @@ export class AppState extends Model<IAppState> {
 		return this.basketCatalog.includes(item);
 	}
 
-	itemOrder() {
+	changeitemOrder() {
 		this.order.items = [];
 		this.basketCatalog.forEach((item) => {
 			this.order.items.push(item.id);
@@ -64,10 +64,6 @@ export class AppState extends Model<IAppState> {
 		this.order.address = '';
 		this.order.email = '';
 		this.order.phone = '';
-	}
-
-	setOrderItems() {
-		this.order.items = this.basketCatalog.map((el) => el.id);
 	}
 
 	setFormAddress(field: keyof IFormAddress, value: string) {

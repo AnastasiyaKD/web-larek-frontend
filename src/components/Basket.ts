@@ -45,7 +45,7 @@ export class Basket extends Component<IBasket> {
 export class BasketProduct extends ProductCard {
 	protected _index: HTMLElement;
 	protected _deleteButton: HTMLElement;
-    
+
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super(container);
 
@@ -61,6 +61,6 @@ export class BasketProduct extends ProductCard {
 	}
 
 	setIndex(value: number) {
-		this._index.textContent = String(value);
+        this.setText(this._index, value)
 	}
 }

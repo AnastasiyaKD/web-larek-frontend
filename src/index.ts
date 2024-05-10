@@ -109,7 +109,7 @@ events.on('item:addToBusket', (item: IProductCard) => {
 });
 
 //Удаление товара из корзины
-events.on('item:remuveFromBusket', (item: IProductCard) => {
+events.on('item:removeFromBusket', (item: IProductCard) => {
 	appData.deleteBasketItem(item);
 	events.emit('basket:changed');
 });
@@ -119,7 +119,7 @@ events.on('basket:changed', () => {
 	let i = 1;
 	basket.addItems = appData.basketCatalog.map((item) => {
 		const card = new BasketProduct(cloneTemplate(basketProdactTemplate), {
-			onClick: () => events.emit('item:remuveFromBusket', item),
+			onClick: () => events.emit('item:removeFromBusket', item),
 		});
 
 		card.setIndex(i++);
@@ -133,7 +133,6 @@ events.on('basket:changed', () => {
 	page.counter = appData.basketCatalog.length;
 	basket.disabledButton(appData.basketCatalog.length);
     appData.total = appData.totalPrice
-    appData.itemOrder()
 });
 
 //Открытие формы с способом оплаты и аддресом
@@ -199,7 +198,7 @@ events.on(
 
 //Отправка формы заказа
 events.on('contacts:submit', () => {
-//	appData.setOrderItems();
+    appData.changeitemOrder()
 	api
 		.postOrder(appData.order)
 		.then((data) => {

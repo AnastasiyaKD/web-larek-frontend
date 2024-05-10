@@ -132,7 +132,7 @@ events.on('basket:changed', () => {
 	basket.total = appData.totalPrice;
 	page.counter = appData.basketCatalog.length;
 	basket.disabledButton(appData.basketCatalog.length);
-    appData.total = appData.totalPrice
+	appData.total = appData.totalPrice;
 });
 
 //Открытие формы с способом оплаты и аддресом
@@ -185,31 +185,31 @@ events.on(
 	(errors: Partial<IFormAddress & IFormContacts>) => {
 		const { email, phone, address, payment } = errors;
 		formContacts.valid = !email && !phone;
-        formAddress.valid = !address && !payment;
-		formAddress.errors = Object.values({ address, payment})
+		formAddress.valid = !address && !payment;
+		formAddress.errors = Object.values({ address, payment })
 			.filter((i) => !!i)
 			.join('; ');
 		formContacts.errors = Object.values({ phone, email })
 			.filter((i) => !!i)
 			.join('; ');
-		
 	}
 );
 
 //Отправка формы заказа
 events.on('contacts:submit', () => {
-    appData.changeitemOrder()
+	appData.setitemOrder();
 	api
 		.postOrder(appData.order)
 		.then((data) => {
-			appData.clearBasket();
-			appData.cleanInputs();
-			page.counter = 0;
 			const success = new SuccessfulOrder(cloneTemplate(successTemplate), {
 				onClick: () => {
 					modal.close();
 				},
 			});
+			page.counter = 0;
+			appData.clearBasket();
+			events.emit('basket:changed');
+			appData.cleanInputs();
 			modal.render({
 				content: success.render({
 					total: data.total,

@@ -48,7 +48,7 @@ export class AppState extends Model<IAppState> {
 		return this.basketCatalog.includes(item);
 	}
 
-	changeitemOrder() {
+	setitemOrder() {
 		this.order.items = [];
 		this.basketCatalog.forEach((item) => {
 			this.order.items.push(item.id);
@@ -57,6 +57,7 @@ export class AppState extends Model<IAppState> {
 
 	clearBasket() {
 		this.basketCatalog = [];
+        
 	}
 
 	cleanInputs() {
